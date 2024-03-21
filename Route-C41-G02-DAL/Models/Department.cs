@@ -13,8 +13,8 @@ namespace Route_C41_G02_DAL.Models
 
         
         public string Name { get; set; } // Code for User
-        
-       
+
+        [Required(ErrorMessage ="Code is required")]
         public string Code { get; set; }
         [Display(Name = "Date Of Creation")]
         public DateTime DateOfCreation { get; set; }
