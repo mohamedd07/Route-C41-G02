@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Route_C41_G02_DAL.Models
 {
-    internal class Department
+    public class Department
     {
         public int Id { get; set; }  // PK For developer
 
