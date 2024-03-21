@@ -35,7 +35,9 @@ namespace Route_C41_G02_PL
             //services.AddScoped<DbContextOptions<ApplicationDbContext>>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer("Server = .; Database = MVC03; Trusted_Connection = True"));
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("DefultConnection"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
