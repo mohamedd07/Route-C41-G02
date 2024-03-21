@@ -58,7 +58,7 @@ namespace Route_C41_G02_PL
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
