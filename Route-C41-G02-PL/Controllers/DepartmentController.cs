@@ -117,5 +117,33 @@ namespace Route_C41_G02_PL.Controllers
 
             }
         }
+
+        public IActionResult Delete(int? id)
+        {
+            return Details(id, "Delete");
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Department department)
+        {
+            try
+            {
+                _departmentRepo.Delete(department);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+
+                if (_env.IsDevelopment())
+                    ModelState.AddModelError(string.Empty, ex.Message);
+
+                else
+                    ModelState.AddModelError(string.Empty, "An Error Has Occured during Updating The Department");
+            }
+
+            return View(department);
+        }
+
+
     }
 }
