@@ -88,6 +88,7 @@ namespace Route_C41_G02_PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit([FromRoute] int id,Department department)
         {
             if(id != department.Id)
