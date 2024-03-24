@@ -107,10 +107,10 @@ namespace Route_C41_G02_PL.Controllers
             }
             catch (Exception ex)
             {
-                if(_env.IsDevelopment())
+                if (_env.IsDevelopment())
                     ModelState.AddModelError(string.Empty, ex.Message);
-                else 
-                    ModelState.AddModelError(string.Empty , "An Error Has Occured during Updating The Employee")
+                else
+                    ModelState.AddModelError(string.Empty, "An Error Has Occured during Updating The Employee");
             }
 
             return View(employee); 
