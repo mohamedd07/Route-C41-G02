@@ -10,41 +10,15 @@ using System.Threading.Tasks;
 
 namespace Route_C41_G02_BLL.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-
-        public EmployeeRepository(ApplicationDbContext dbContext) // Ask CLR For Creating Object From ApplicationDbContext
+        public EmployeeRepository(ApplicationDbContext dbContext):base(dbContext)
         {
-            _dbContext = dbContext;
+            
         }
-        public int Add(Employee employee)
+        public IQueryable<Employee> GetEmployeeByAddress(string address)
         {
-            _dbContext.Employees.Add(employee);
-            return _dbContext.SaveChanges();
-        }
-
-        public int Delete(Employee employee)
-        {
-            _dbContext.Employees.Remove(employee);
-            return _dbContext.SaveChanges();
-        }
-
-        public Employee Get(int id)
-        {
-            return _dbContext.Find<Employee>(id); // EF Core 3.1 Feture
-        }
-
-        public IEnumerable<Employee> GetAll()
-        {
-            return _dbContext.Employees.AsNoTracking().ToList();
-        }
-
-        public int Update(Employee employee)
-        {
-            _dbContext.Employees.Update(employee);
-            return _dbContext.SaveChanges();
-
+            return _dbContext.Employees.Where(e => e.Address.ToLower() == address.ToLower()); // Not the best way
         }
     }
 }

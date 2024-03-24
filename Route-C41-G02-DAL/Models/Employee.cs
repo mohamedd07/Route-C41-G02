@@ -21,9 +21,9 @@ namespace Route_C41_G02_DAL.Models
         FullTime = 1,
         PartTime = 2
     }
-    public class Employee
+    public class Employee :ModelBase
     {
-        public int Id { get; set; }
+        // public int Id { get; set; }
 
         [Required(ErrorMessage ="Name is Required!")]
         [MaxLength(50,ErrorMessage ="Max Length is 50 Chars")]

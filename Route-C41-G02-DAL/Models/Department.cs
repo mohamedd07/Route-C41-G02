@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Route_C41_G02_DAL.Models
 {
-    public class Department
+    public class Department : ModelBase
     {
-        public int Id { get; set; }  // PK For developer
+        //public int Id { get; set; }  // PK For developer
 
         
         public string Name { get; set; } // Code for User
