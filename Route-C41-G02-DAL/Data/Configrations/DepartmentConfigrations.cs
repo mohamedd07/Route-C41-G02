@@ -13,6 +13,8 @@ namespace Route_C41_G02_DAL.Data.Configrations
     {
         public void Configure(EntityTypeBuilder<Department> builder)
         {
+            builder.HasMany(D=> D.Employees).WithOne(E=> E.Department)
+                .HasForeignKey(E => E.DepartmentId).OnDelete(DeleteBehavior.Cascade);
             // Fluent APIs for Department
             builder.Property(D=>D.Id).UseIdentityColumn(10,10);
             builder.Property(D => D.Code).HasColumnType("varchar").HasMaxLength(50).IsRequired();
