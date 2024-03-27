@@ -22,10 +22,10 @@ namespace Route_C41_G02_PL.Controllers
         {
             // Binding Through View's Dictionary --> Transfer data from action to view [One Way]
             // 1. ViewData -->.Net 3.5
-            ViewData["Message"] = "Hello ViewData";
+            //ViewData["Message"] = "Hello ViewData";
 
             // 2. ViewBag --> .Net 4.0 [Based on Dynamic Keyword] --> CLR will Detect the dataType on run time
-            ViewBag.Message = "Hello ViewBag"; // --> The same key [Message] the viewbag will override the Value of Message.
+            //ViewBag.Message = "Hello ViewBag"; // --> The same key [Message] the viewbag will override the Value of Message.
 
 
             var employee = _employeeRepo.GetAll();
@@ -40,13 +40,21 @@ namespace Route_C41_G02_PL.Controllers
         [HttpPost]
         public IActionResult Create(Employee employee)
         {
+            // To Transfer data to the next request of the current request we USE:
+            // 3. TempData --> Call another dictionary [Not like ViewBag & ViewData] 
+
+
             if(ModelState.IsValid)
             {
                 var count = _employeeRepo.Add(employee);
                 if(count > 0)
-                {
-                    return RedirectToAction("Index");
-                }
+                     TempData["Message"] = "Employee is Created Successfully";
+                
+                else
+                    TempData["Message"] = "AN Error Has Occured While Employee is Created";
+
+                return RedirectToAction("Index");
+
             }
             return View(employee);
         }

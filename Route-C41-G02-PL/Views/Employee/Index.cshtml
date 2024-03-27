@@ -8,6 +8,12 @@
     
 }
 
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
 
 @* <div class="alert alert-warning">
     @ViewData["Message"]
