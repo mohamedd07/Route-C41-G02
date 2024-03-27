@@ -1,7 +1,22 @@
 ﻿@model IEnumerable<Employee>
 @{
     ViewData["Title"] = "Index";
+
+    string viewDataMessage = ViewData["Message"] as string; // --> Must Type Conversion // More faster than ViewBag ang more safety
+    string ViewBagMessage = ViewBag.Message; // --> Not need to type conversion [Canot enfoece type safety]
+
+    
 }
+
+
+@* <div class="alert alert-warning">
+    @ViewData["Message"]
+</div>
+
+<div class="alert alert-success">
+    @ViewBag.Mee
+</div> 
+ *@
 
 <h1>All Employees</h1>
 <br />

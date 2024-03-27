@@ -20,6 +20,14 @@ namespace Route_C41_G02_PL.Controllers
 
         public IActionResult Index()
         {
+            // Binding Through View's Dictionary --> Transfer data from action to view [One Way]
+            // 1. ViewData -->.Net 3.5
+            ViewData["Message"] = "Hello ViewData";
+
+            // 2. ViewBag --> .Net 4.0 [Based on Dynamic Keyword] --> CLR will Detect the dataType on run time
+            ViewBag.Message = "Hello ViewBag"; // --> The same key [Message] the viewbag will override the Value of Message.
+
+
             var employee = _employeeRepo.GetAll();
             return View(employee);
         }
