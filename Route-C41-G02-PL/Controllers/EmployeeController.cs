@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Route_C41_G02_BLL.Interfaces;
 using Route_C41_G02_DAL.Models;
+using Route_C41_G02_PL.ViewModels;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Route_C41_G02_PL.Controllers
 {
@@ -11,12 +15,15 @@ namespace Route_C41_G02_PL.Controllers
     {
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IWebHostEnvironment _env;
+        private readonly IMapper _mapper;
+
         //private readonly IDepartmentRepository _departmentRepo;
 
-        public EmployeeController(IEmployeeRepository employeeRepository , IWebHostEnvironment env /*,IDepartmentRepository departmentRepo*/)
+        public EmployeeController(IEmployeeRepository employeeRepository , IWebHostEnvironment env /*,IDepartmentRepository departmentRepo*/,IMapper mapper)
         {
             _employeeRepo = employeeRepository;
             _env = env;
+            _mapper = mapper;
             //_departmentRepo = departmentRepo;
         }
 
@@ -32,13 +39,17 @@ namespace Route_C41_G02_PL.Controllers
             if (string.IsNullOrWhiteSpace(searchInp))
             {
                 var employee = _employeeRepo.GetAll();
-                return View(employee);
+                var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
+
+                return View(MappedEmployee);
             }
 
             else
             {
                 var employee = _employeeRepo.SearchByName(searchInp.ToLower());
-                return View(employee);
+                var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
+
+                return View(MappedEmployee);
             }
         }
 
@@ -50,15 +61,15 @@ namespace Route_C41_G02_PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Employee employee)
+        public IActionResult Create(EmployeeViewModel employee)
         {
             // To Transfer data to the next request of the current request we USE:
             // 3. TempData --> Call another dictionary [Not like ViewBag & ViewData] 
 
-
+            var MappedEmployee = _mapper.Map<EmployeeViewModel , Employee>(employee);
             if(ModelState.IsValid)
             {
-                var count = _employeeRepo.Add(employee);
+                var count = _employeeRepo.Add(MappedEmployee);
                 if(count > 0)
                      TempData["Message"] = "Employee is Created Successfully";
                 
@@ -79,11 +90,13 @@ namespace Route_C41_G02_PL.Controllers
             }
 
             var employee= _employeeRepo.Get(id.Value);
+            var MappedEmployee = _mapper.Map<Employee, EmployeeViewModel>(employee);
 
-            if(employee is null)
+
+            if (employee is null)
                 return NotFound();  
 
-            return View(employee); 
+            return View(MappedEmployee); 
         }
 
         public IActionResult Edit(int? id)
@@ -95,17 +108,18 @@ namespace Route_C41_G02_PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id , Employee employee)
+        public IActionResult Edit([FromRoute] int id , EmployeeViewModel employee)
         {
             if (id != employee.Id)
                 return BadRequest();
 
             if (!ModelState.IsValid)
                 return View(employee);
+            var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
 
             try
             {
-                _employeeRepo.Update(employee);
+                _employeeRepo.Update(MappedEmployee);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -128,11 +142,13 @@ namespace Route_C41_G02_PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(Employee employee)
+        public IActionResult Delete(EmployeeViewModel employee)
         {
+            var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
+
             try
             {
-                _employeeRepo.Delete(employee);
+                _employeeRepo.Delete(MappedEmployee);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

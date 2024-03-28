@@ -10,6 +10,7 @@ using Route_C41_G02_BLL.Interfaces;
 using Route_C41_G02_BLL.Repositories;
 using Route_C41_G02_DAL.Data;
 using Route_C41_G02_PL.Extensions;
+using Route_C41_G02_PL.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,8 @@ namespace Route_C41_G02_PL
             });
 
             services.AddAppService();
+
+            services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
