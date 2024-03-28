@@ -11,11 +11,13 @@ namespace Route_C41_G02_PL.Controllers
     {
         private readonly IEmployeeRepository _employeeRepo;
         private readonly IWebHostEnvironment _env;
+        //private readonly IDepartmentRepository _departmentRepo;
 
-        public EmployeeController(IEmployeeRepository employeeRepository , IWebHostEnvironment env)
+        public EmployeeController(IEmployeeRepository employeeRepository , IWebHostEnvironment env /*,IDepartmentRepository departmentRepo*/)
         {
             _employeeRepo = employeeRepository;
             _env = env;
+            //_departmentRepo = departmentRepo;
         }
 
         public IActionResult Index()
@@ -34,6 +36,8 @@ namespace Route_C41_G02_PL.Controllers
 
         public IActionResult Create()
         {
+            //ViewData["Department"] = _departmentRepo.GetAll();
+            //ViewBag.Department = _departmentRepo.GetAll();
             return View();
         }
 
@@ -76,6 +80,8 @@ namespace Route_C41_G02_PL.Controllers
 
         public IActionResult Edit(int? id)
         {
+            //ViewBag.Department = _departmentRepo.GetAll();
+
             return Details(id, "Edit");
         }
 

@@ -1,5 +1,12 @@
 ﻿@model Employee
 
+@inject IDepartmentRepository _departmentRepo
+
+
+@{
+    var departments = new SelectList(/* ViewData["Department"] as IEnumerable<Department> */ _departmentRepo.GetAll(), nameof(Department.Id),nameof(Department.Name));
+}
+
 <div claaa="form-group">
     <label class="col-form-label" asp-for="Name"></label>
     <input asp-for="Name" class="form-control" />
@@ -45,4 +52,12 @@
 <div claaa="form-group">
     <input asp-for="IsActive" class="form-check-input" />
     <label class="col-form-label" asp-for="IsActive"></label>
+</div>
+
+<div class="froem-group">
+    <label class="col-form-label" asp-for="Department"></Label>
+    <select class="form-control" asp-for="DepartmentId" asp-items="@departments">
+        <option value="@null">-- Select Department -- </option>
+    </select>
+
 </div>
