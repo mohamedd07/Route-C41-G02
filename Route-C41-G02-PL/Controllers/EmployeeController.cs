@@ -20,7 +20,7 @@ namespace Route_C41_G02_PL.Controllers
             //_departmentRepo = departmentRepo;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchInp)
         {
             // Binding Through View's Dictionary --> Transfer data from action to view [One Way]
             // 1. ViewData -->.Net 3.5
@@ -29,9 +29,17 @@ namespace Route_C41_G02_PL.Controllers
             // 2. ViewBag --> .Net 4.0 [Based on Dynamic Keyword] --> CLR will Detect the dataType on run time
             //ViewBag.Message = "Hello ViewBag"; // --> The same key [Message] the viewbag will override the Value of Message.
 
+            if (string.IsNullOrWhiteSpace(searchInp))
+            {
+                var employee = _employeeRepo.GetAll();
+                return View(employee);
+            }
 
-            var employee = _employeeRepo.GetAll();
-            return View(employee);
+            else
+            {
+                var employee = _employeeRepo.SearchByName(searchInp.ToLower());
+                return View(employee);
+            }
         }
 
         public IActionResult Create()
