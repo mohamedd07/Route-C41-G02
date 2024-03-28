@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Route_C41_G02_BLL.Interfaces;
 using Route_C41_G02_BLL.Repositories;
 using Route_C41_G02_DAL.Data;
+using Route_C41_G02_PL.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,8 +42,7 @@ namespace Route_C41_G02_PL
                 options.UseSqlServer(Configuration.GetConnectionString("DefultConnection"));
             });
 
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddAppService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
