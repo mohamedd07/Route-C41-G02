@@ -3,25 +3,30 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Route_C41_G02_BLL.Interfaces;
+using Route_C41_G02_BLL.Repositories;
 using Route_C41_G02_DAL.Models;
 using Route_C41_G02_PL.ViewModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Route_C41_G02_PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepo;
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private readonly IEmployeeRepository _employeeRepo;
         private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
 
         //private readonly IDepartmentRepository _departmentRepo;
 
-        public EmployeeController(IEmployeeRepository employeeRepository , IWebHostEnvironment env /*,IDepartmentRepository departmentRepo*/,IMapper mapper)
+        public EmployeeController(IUnitOfWork unitOfWork,/*IEmployeeRepository employeeRepository */ IWebHostEnvironment env /*,IDepartmentRepository departmentRepo*/,IMapper mapper)
         {
-            _employeeRepo = employeeRepository;
+            _unitOfWork = unitOfWork;
+            //_employeeRepo = employeeRepository;
             _env = env;
             _mapper = mapper;
             //_departmentRepo = departmentRepo;
@@ -35,22 +40,22 @@ namespace Route_C41_G02_PL.Controllers
 
             // 2. ViewBag --> .Net 4.0 [Based on Dynamic Keyword] --> CLR will Detect the dataType on run time
             //ViewBag.Message = "Hello ViewBag"; // --> The same key [Message] the viewbag will override the Value of Message.
+            var employee = Enumerable.Empty<Employee>();
 
-            if (string.IsNullOrWhiteSpace(searchInp))
+
+            if (string.IsNullOrEmpty(searchInp))
             {
-                var employee = _employeeRepo.GetAll();
-                var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
-
-                return View(MappedEmployee);
+                //var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
+                employee = _unitOfWork.EmployeeRepository.GetAll();
             }
 
             else
             {
-                var employee = _employeeRepo.SearchByName(searchInp.ToLower());
-                var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
-
-                return View(MappedEmployee);
+                employee = _unitOfWork.EmployeeRepository.SearchByName(searchInp.ToLower());
+                //var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
             }
+            return View(_mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee));
+
         }
 
         public IActionResult Create()
@@ -69,7 +74,11 @@ namespace Route_C41_G02_PL.Controllers
             var MappedEmployee = _mapper.Map<EmployeeViewModel , Employee>(employee);
             if(ModelState.IsValid)
             {
-                var count = _employeeRepo.Add(MappedEmployee);
+                _unitOfWork.EmployeeRepository.Add(MappedEmployee);
+
+                var count = _unitOfWork.Complete();
+
+
                 if(count > 0)
                      TempData["Message"] = "Employee is Created Successfully";
                 
@@ -89,7 +98,7 @@ namespace Route_C41_G02_PL.Controllers
                 return BadRequest();
             }
 
-            var employee= _employeeRepo.Get(id.Value);
+            var employee= _unitOfWork.EmployeeRepository.Get(id.Value);
             var MappedEmployee = _mapper.Map<Employee, EmployeeViewModel>(employee);
 
 
@@ -119,7 +128,8 @@ namespace Route_C41_G02_PL.Controllers
 
             try
             {
-                _employeeRepo.Update(MappedEmployee);
+                _unitOfWork.EmployeeRepository.Update(MappedEmployee);
+                _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -148,7 +158,8 @@ namespace Route_C41_G02_PL.Controllers
 
             try
             {
-                _employeeRepo.Delete(MappedEmployee);
+                _unitOfWork.EmployeeRepository.Delete(MappedEmployee);
+                _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

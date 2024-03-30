@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Route_C41_G02_BLL.Interfaces
 {
-    public interface IDepartmentRepository : GenericRepository<Department>
+    public interface IDepartmentRepository : IGenericRepository<Department>
     {
     }
 }

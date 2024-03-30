@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Route_C41_G02_BLL.Repositories
 {
-    public class GenericRepository<T> : Interfaces.GenericRepository<T> where T : ModelBase
+    public class GenericRepository<T> : Interfaces.IGenericRepository<T> where T : ModelBase
     {
         private protected readonly ApplicationDbContext _dbContext;
 
@@ -18,16 +18,16 @@ namespace Route_C41_G02_BLL.Repositories
         {
             _dbContext = dbContext;
         }
-        public int Add(T entity)
+        public void Add(T entity)
         {
             _dbContext.Set<T>().Add(entity);
-            return _dbContext.SaveChanges();
+            //return _dbContext.SaveChanges();
         }
 
-        public int Delete(T entity)
+        public void Delete(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
-            return _dbContext.SaveChanges();
+            //return _dbContext.SaveChanges();
         }
 
         public T Get(int id)
@@ -37,18 +37,15 @@ namespace Route_C41_G02_BLL.Repositories
 
         public IEnumerable<T> GetAll()
         {
-            if(typeof(T) == typeof(Employee)) // NOT The best Solution
-            {
-                return (IEnumerable <T>) _dbContext.Employees.Include(E=> E.Department).AsNoTracking().ToList();
-            }
             return _dbContext.Set<T>().AsNoTracking().ToList();
         }
 
-        public int Update(T entity)
+        public void Update(T entity)
         {
             _dbContext.Set<T>().Update(entity);
-            return _dbContext.SaveChanges();
+            //return _dbContext.SaveChanges();
 
         }
+
     }
 }

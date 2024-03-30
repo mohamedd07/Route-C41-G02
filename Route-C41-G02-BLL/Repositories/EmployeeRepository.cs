@@ -21,6 +21,10 @@ namespace Route_C41_G02_BLL.Repositories
             return _dbContext.Employees.Where(e => e.Address.ToLower() == address.ToLower()); // Not the best way
         }
 
+        public new IEnumerable<Employee> GetAll()
+        {
+            return _dbContext.Set<Employee>().Include(E=> E.Department).AsNoTracking().ToList();
+        }
         public IQueryable<Employee> SearchByName(string name)
         {
             return _dbContext.Employees.Where(E=> E.Name.ToLower().Contains(name));
