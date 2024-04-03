@@ -1,6 +1,6 @@
 using System;
 
-namespace Route_C41_G02_PL.Models
+namespace Route_C41_G02_PL.ViewModels
 {
     public class ErrorViewModel
     {
