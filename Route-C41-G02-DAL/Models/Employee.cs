@@ -53,6 +53,8 @@ namespace Route_C41_G02_DAL.Models
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
+        public string ImageName { get; set; }
+
         public bool IsDeleted { get; set; } = false;
 
         public int? DepartmentId { get; set; }

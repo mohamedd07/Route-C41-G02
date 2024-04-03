@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System;
 using System.Runtime.Serialization;
+using Microsoft.AspNetCore.Http;
 
 namespace Route_C41_G02_PL.ViewModels
 {
@@ -58,6 +59,10 @@ namespace Route_C41_G02_PL.ViewModels
 
         public int? DepartmentId { get; set; }
         public Department Department { get; set; } // Navgational Property [ONE]
+
+        public IFormFile Image { get; set; }
+
+        public string ImageName { get; set; }
 
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Route_C41_G02_BLL.Interfaces;
 using Route_C41_G02_BLL.Repositories;
 using Route_C41_G02_DAL.Models;
+using Route_C41_G02_PL.Helpers;
 using Route_C41_G02_PL.ViewModels;
 using System;
 using System.Collections;
@@ -59,16 +60,25 @@ namespace Route_C41_G02_PL.Controllers
             
             if(ModelState.IsValid)
             {
+                employee.ImageName= DocumentSettings.UploadFile(employee.Image, "images");
+
+
+
+
+
                 var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
+
+                //MappedEmployee.ImageName = fileName;
 
                 _unitOfWork.Repository<Employee>().Add(MappedEmployee);
 
                 var count = _unitOfWork.Complete();
 
 
-                if(count > 0)
-                     TempData["Message"] = "Employee is Created Successfully";
-                
+                if (count > 0)
+                {
+                    TempData["Message"] = "Employee is Created Successfully";
+                }
                 else
                     TempData["Message"] = "AN Error Has Occured While Employee is Created";
 
