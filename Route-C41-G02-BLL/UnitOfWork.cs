@@ -13,20 +13,27 @@ namespace Route_C41_G02_BLL
 {
     public class UnitOfWork : IUnitOfWork
     {
+
         private readonly ApplicationDbContext _dbContext;
-        //private Dictionary<string, IGenericRepository<ModelBase>> _repositories; 
+        ////private Dictionary<string, IGenericRepository<ModelBase>> _repositories; 
         private Hashtable _repositories;
 
-        public IEmployeeRepository EmployeeRepository { get; set; } = null;
-        public IDepartmentRepository DepartmentRepository { get; set; } = null;
+
+
+        //public IEmployeeRepository EmployeeRepository { get; set; } = null;
+        //public IDepartmentRepository DepartmentRepository { get; set; } = null;
 
         public UnitOfWork(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
             _repositories = new Hashtable();
+
             //EmployeeRepository = new EmployeeRepository(_dbContext);
             //DepartmentRepository = new DepartmentRepository(_dbContext);
-            _dbContext = dbContext;
+
         }
+
+
         public int Complete()
         {
             return _dbContext.SaveChanges();
@@ -37,17 +44,25 @@ namespace Route_C41_G02_BLL
             _dbContext.Dispose();
         }
 
-        public Interfaces.IGenericRepository<T> Repository<T>() where T : ModelBase
+        public IGenericRepository<T> Repository<T>() where T : ModelBase
         {
             var key = typeof(T).Name;
-            if (!_repositories.Contains(key))
+
+            if (!_repositories.ContainsKey(key))
             {
-                var repository = new GenericRepository<T>(_dbContext);
-                _repositories.Add(key, repository);
+                if (key == nameof(Employee))
+                {
+                    var repository = new EmployeeRepository(_dbContext);
+                    _repositories[key] = repository;
+                }
+                else
+                {
+                    var repository = new GenericRepository<T>(_dbContext);
+                    _repositories.Add(key, repository);
+                }
             }
 
             return _repositories[key] as IGenericRepository<T>;
-
         }
     }
 }

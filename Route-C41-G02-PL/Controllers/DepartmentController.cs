@@ -19,24 +19,18 @@ namespace Route_C41_G02_PL.Controllers
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        // Inheritance : Is a Controller
-        // Composition : Has a DepartmentRepository
-
-        //private readonly IDepartmentRepository _departmentRepo;
         private readonly IWebHostEnvironment _env;
 
-        public DepartmentController(IUnitOfWork unitOfWork/*IDepartmentRepository departmentRepository ,*/ ,IWebHostEnvironment env)
+        public DepartmentController(IUnitOfWork unitOfWork ,IWebHostEnvironment env)
         {
             _unitOfWork = unitOfWork;
-            //_departmentRepo = departmentRepository;
             _env = env;
         }
 
         // /Department/Index
         public IActionResult Index()
         {
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var departments = _unitOfWork.Repository<Department>().GetAll();
 
             return View(departments);
         }
@@ -52,7 +46,7 @@ namespace Route_C41_G02_PL.Controllers
         {
             if(ModelState.IsValid) //Server Side Validation
             {
-                _unitOfWork.DepartmentRepository.Add(department);
+                _unitOfWork.Repository<Department>().Add(department);
 
                 var count = _unitOfWork.Complete();
                 if (count>0)
@@ -68,7 +62,7 @@ namespace Route_C41_G02_PL.Controllers
             if (!id.HasValue)
                 return BadRequest();
 
-            var department = _unitOfWork.DepartmentRepository.Get(id.Value);
+            var department = _unitOfWork.Repository<Department>().Get(id.Value);
 
             if (department is null)
                 return NotFound();
@@ -79,16 +73,6 @@ namespace Route_C41_G02_PL.Controllers
 
         public IActionResult Edit(int? id)
         {
-            //if(!id.HasValue)
-            //    return BadRequest();
-
-            //var department = _departmentRepo.Get(id.Value);
-
-            //if(department is null)
-            //    return NotFound();
-
-            //return View(department);
-
             return Details(id , "Edit");
         }
 
@@ -104,7 +88,7 @@ namespace Route_C41_G02_PL.Controllers
 
             try
             {
-                _unitOfWork.DepartmentRepository.Update(department);
+                _unitOfWork.Repository<Department>().Update(department);
                 _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
@@ -134,7 +118,7 @@ namespace Route_C41_G02_PL.Controllers
         {
             try
             {
-                _unitOfWork.DepartmentRepository.Delete(department);
+                _unitOfWork.Repository<Department>().Delete(department);
                 _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }

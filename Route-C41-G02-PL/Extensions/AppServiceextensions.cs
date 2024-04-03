@@ -8,14 +8,11 @@ namespace Route_C41_G02_PL.Extensions
 {
     public static class AppServiceextensions
     {
-        public static void AddAppService(this IServiceCollection service)
+        public static IServiceCollection AddAppService(this IServiceCollection service)
         {
             service.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddTransient<IDepartmentRepository, DepartmentRepository>();
-            //services.AddSingleton<IDepartmentRepository, DepartmentRepository>();
-            //service.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
-            //service.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            return service;
         }
     }
 }

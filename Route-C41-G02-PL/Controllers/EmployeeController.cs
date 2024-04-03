@@ -16,43 +16,31 @@ namespace Route_C41_G02_PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        //private readonly IEmployeeRepository _employeeRepo;
         private readonly IWebHostEnvironment _env;
         private readonly IMapper _mapper;
 
         //private readonly IDepartmentRepository _departmentRepo;
 
-        public EmployeeController(IUnitOfWork unitOfWork,/*IEmployeeRepository employeeRepository */ IWebHostEnvironment env /*,IDepartmentRepository departmentRepo*/,IMapper mapper)
+        public EmployeeController(IUnitOfWork unitOfWork, IWebHostEnvironment env ,IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            //_employeeRepo = employeeRepository;
             _env = env;
             _mapper = mapper;
-            //_departmentRepo = departmentRepo;
         }
 
         public IActionResult Index(string searchInp)
         {
-            // Binding Through View's Dictionary --> Transfer data from action to view [One Way]
-            // 1. ViewData -->.Net 3.5
-            //ViewData["Message"] = "Hello ViewData";
-
-            // 2. ViewBag --> .Net 4.0 [Based on Dynamic Keyword] --> CLR will Detect the dataType on run time
-            //ViewBag.Message = "Hello ViewBag"; // --> The same key [Message] the viewbag will override the Value of Message.
             var employee = Enumerable.Empty<Employee>();
-
+            var employeeRepo = _unitOfWork.Repository<Employee>() as EmployeeRepository;
 
             if (string.IsNullOrEmpty(searchInp))
             {
-                //var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
-                employee = _unitOfWork.EmployeeRepository.GetAll();
+                employee = employeeRepo.GetAll();
             }
 
             else
             {
-                employee = _unitOfWork.EmployeeRepository.SearchByName(searchInp.ToLower());
-                //var MappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee);
+                employee = employeeRepo.SearchByName(searchInp.ToLower());
             }
             return View(_mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employee));
 
@@ -68,13 +56,12 @@ namespace Route_C41_G02_PL.Controllers
         [HttpPost]
         public IActionResult Create(EmployeeViewModel employee)
         {
-            // To Transfer data to the next request of the current request we USE:
-            // 3. TempData --> Call another dictionary [Not like ViewBag & ViewData] 
-
-            var MappedEmployee = _mapper.Map<EmployeeViewModel , Employee>(employee);
+            
             if(ModelState.IsValid)
             {
-                _unitOfWork.EmployeeRepository.Add(MappedEmployee);
+                var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
+
+                _unitOfWork.Repository<Employee>().Add(MappedEmployee);
 
                 var count = _unitOfWork.Complete();
 
@@ -98,20 +85,16 @@ namespace Route_C41_G02_PL.Controllers
                 return BadRequest();
             }
 
-            var employee= _unitOfWork.EmployeeRepository.Get(id.Value);
-            var MappedEmployee = _mapper.Map<Employee, EmployeeViewModel>(employee);
-
+            var employee= _unitOfWork.Repository<Employee>().Get(id.Value);
 
             if (employee is null)
                 return NotFound();  
 
-            return View(MappedEmployee); 
+            return View(ViewName,_mapper.Map<Employee,EmployeeViewModel>(employee)); 
         }
 
         public IActionResult Edit(int? id)
         {
-            //ViewBag.Department = _departmentRepo.GetAll();
-
             return Details(id, "Edit");
         }
 
@@ -124,11 +107,12 @@ namespace Route_C41_G02_PL.Controllers
 
             if (!ModelState.IsValid)
                 return View(employee);
-            var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
 
             try
             {
-                _unitOfWork.EmployeeRepository.Update(MappedEmployee);
+                var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
+
+                _unitOfWork.Repository<Employee>().Update(MappedEmployee);
                 _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
@@ -154,11 +138,12 @@ namespace Route_C41_G02_PL.Controllers
         [HttpPost]
         public IActionResult Delete(EmployeeViewModel employee)
         {
-            var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
 
             try
             {
-                _unitOfWork.EmployeeRepository.Delete(MappedEmployee);
+                var MappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employee);
+
+                _unitOfWork.Repository<Employee>().Delete(MappedEmployee);
                 _unitOfWork.Complete();
                 return RedirectToAction("Index");
             }
