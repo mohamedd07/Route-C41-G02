@@ -1,9 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Route_C41_G02_BLL.Interfaces;
+using Route_C41_G02_BLL.Repositories;
+using Route_C41_G02_DAL.Data;
+using Route_C41_G02_DAL.Models;
+using Route_C41_G02_PL.Extensions;
+using Route_C41_G02_PL.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +33,44 @@ namespace Route_C41_G02_PL
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //services.AddTransient<ApplicationDbContext>();
+            //services.AddSingleton<ApplicationDbContext>();
+
+            //services.AddScoped<ApplicationDbContext>(); // One object in per request
+            //services.AddScoped<DbContextOptions<ApplicationDbContext>>();
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("DefultConnection"));
+            });
+
+            services.AddAppService();
+
+            //services.AddScoped<UserManager<ApplicationUser>>();
+            //services.AddScoped<SignInManager<ApplicationUser>>();
+            //services.AddScoped<RoleManager<IdentityRole>>();
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredUniqueChars = 2;
+                options.Password.RequiredLength = 5;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan= TimeSpan.FromHours(5);
+
+                options.User.RequireUniqueEmail = true; 
+
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //services.AddAuthentication(); // Called by Defult
+            
+
+            services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,7 +91,7 @@ namespace Route_C41_G02_PL
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
