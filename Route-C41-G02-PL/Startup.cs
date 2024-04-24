@@ -71,6 +71,8 @@ namespace Route_C41_G02_PL
             
 
             services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
+
+            //services.AddAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

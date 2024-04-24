@@ -64,6 +64,48 @@ namespace Route_C41_G02_PL.Controllers
             return View(model);
 		}
 
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if(user is null)
+                {
+                    var flag = await _userManager.CheckPasswordAsync(user, model.Password);
+                    if (flag)
+                    {
+						var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+
+						if (result.IsLockedOut)
+						{
+							ModelState.AddModelError(string.Empty, "Your Account Is Locked");
+						}
+
+
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction(nameof(HomeController.Index), "Home");
+                        }
+
+						if (result.IsNotAllowed)
+						{
+							ModelState.AddModelError(string.Empty, "Your Account Is not Confimed Yet");
+						}
+
+					}
+                }
+                ModelState.AddModelError(string.Empty, "Invalid Login");
+            }
+
+            return View(model);
+        }
+
 		#endregion
 	}
 }
