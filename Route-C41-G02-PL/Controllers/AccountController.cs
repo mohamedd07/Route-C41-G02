@@ -107,5 +107,11 @@ namespace Route_C41_G02_PL.Controllers
         }
 
 		#endregion
+
+        public async new Task<ActionResult> SignOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(SignIn));
+        }
 	}
 }
