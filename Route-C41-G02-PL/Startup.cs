@@ -67,10 +67,23 @@ namespace Route_C41_G02_PL
 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-            //services.AddAuthentication(); // Called by Defult
-            
+            //services.AddAuthentication(); // Called by Defult// we use it when we need to specify schema 
 
-            services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/SignIn";
+                options.ExpireTimeSpan = TimeSpan.FromHours(3);
+                options.AccessDeniedPath = "/Home/Error";
+            });
+
+            services.AddAuthentication(); //AddCookie("Hamada", options=>
+            //{
+			//	options.LoginPath = "/Account/SignIn";
+			//	options.ExpireTimeSpan = TimeSpan.FromHours(3);
+			//	options.AccessDeniedPath = "/Home/Error";
+			//});
+
+			services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
 
             //services.AddAuthentication();
         }
@@ -92,6 +105,9 @@ namespace Route_C41_G02_PL
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthorization(); // Account has role
+            app.UseAuthentication(); // Account is 
 
             // app.UseAuthorization();
 

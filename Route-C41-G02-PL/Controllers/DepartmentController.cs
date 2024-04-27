@@ -13,9 +13,11 @@ using Route_C41_G02_BLL.Interfaces;
 using Route_C41_G02_DAL.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Route_C41_G02_PL.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
